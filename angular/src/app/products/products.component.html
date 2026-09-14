@@ -1,0 +1,63 @@
+<div class="card">
+  <div class="card-header d-flex justify-content-between align-items-center">
+    <h4 class="card-title mb-0">Danh sách điện thoại</h4>
+    <button class="btn btn-primary" type="button">
+      <i class="fa fa-plus me-1"></i> Thêm sản phẩm
+    </button>
+  </div>
+
+  <div class="card-body">
+    <div class="row row-cols-1 row-cols-md-3 g-4" *ngIf="products.items.length > 0; else noData">
+      <div class="col" *ngFor="let item of products.items">
+        <div class="card h-100 shadow-sm border-0">
+          <img
+            [src]="item.thumbnailUrl"
+            referrerpolicy="no-referrer"
+            (error)="
+              $any($event.target).src =
+                'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=500&auto=format&fit=crop&q=60'
+            "
+            class="card-img-top p-3"
+            style="height: 220px; object-fit: contain"
+            [alt]="item.name"
+          />
+          <div class="card-body">
+            <h5
+              class="card-title text-primary"
+              [routerLink]="['/products', item.id]"
+              style="cursor: pointer"
+            >
+              {{ item.name }}
+            </h5>
+            <p class="card-text text-muted small">{{ item.description }}</p>
+
+            <div class="specs mb-2">
+              <span class="badge bg-light text-dark border me-1">{{
+                item.chipset || 'Chip N/A'
+              }}</span>
+              <span class="badge bg-light text-dark border me-1">{{
+                item.screenSize || 'Màn hình N/A'
+              }}</span>
+              <span class="badge bg-light text-dark border">{{
+                item.batteryCapacity ? item.batteryCapacity + ' mAh' : 'Pin N/A'
+              }}</span>
+            </div>
+
+            <div class="variants mt-2" *ngIf="item.variants?.length">
+              <span class="text-danger fw-bold fs-5">
+                {{ item.variants[0].price | currency: 'VND' : 'symbol' : '1.0-0' }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <ng-template #noData>
+      <div class="text-center py-5 text-muted">
+        <i class="fas fa-box-open fa-3x mb-3"></i>
+        <p>Chưa có sản phẩm nào trong kho dữ liệu.</p>
+      </div>
+    </ng-template>
+  </div>
+</div>

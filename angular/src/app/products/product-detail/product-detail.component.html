@@ -1,0 +1,94 @@
+<div class="container py-4" *ngIf="product">
+  <nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a routerLink="/products">Điện thoại</a></li>
+      <li class="breadcrumb-item active">{{ product.name }}</li>
+    </ol>
+  </nav>
+
+  <div class="row g-4">
+    <!-- Cột ảnh sản phẩm -->
+    <div class="col-md-5 text-center">
+      <div class="card p-3 shadow-sm border-0">
+        <img
+          [src]="product.thumbnailUrl"
+          class="img-fluid"
+          style="max-height: 400px; object-fit: contain"
+          [alt]="product.name"
+        />
+      </div>
+    </div>
+
+    <!-- Cột thông tin và chọn phiên bản -->
+    <div class="col-md-7">
+      <h2 class="fw-bold mb-2">{{ product.name }}</h2>
+      <p class="text-muted mb-3">{{ product.description }}</p>
+
+      <!-- Giá hiển thị theo biến thể đang chọn -->
+      <div class="mb-4 p-3 bg-light rounded" *ngIf="selectedVariant">
+        <span class="text-danger fw-bold fs-3 me-2">
+          {{
+            selectedVariant.salePrice || selectedVariant.price
+              | currency: 'VND' : 'symbol' : '1.0-0'
+          }}
+        </span>
+        <span
+          *ngIf="selectedVariant.salePrice"
+          class="text-muted text-decoration-line-through fs-5"
+        >
+          {{ selectedVariant.price | currency: 'VND' : 'symbol' : '1.0-0' }}
+        </span>
+      </div>
+
+      <!-- Danh sách phiên bản (Dung lượng / Màu sắc) -->
+      <div class="mb-4" *ngIf="product.variants?.length">
+        <label class="form-label fw-bold">Chọn phiên bản:</label>
+        <div class="d-flex flex-wrap gap-2">
+          <button
+            type="button"
+            *ngFor="let v of product.variants"
+            class="btn text-start p-2 border"
+            [ngClass]="
+              selectedVariant?.id === v.id
+                ? 'btn-outline-primary border-primary active'
+                : 'btn-light'
+            "
+            (click)="onSelectVariant(v)"
+          >
+            <div class="fw-bold">{{ v.storage }} - {{ v.color }}</div>
+            <small class="text-muted">{{ v.price | currency: 'VND' : 'symbol' : '1.0-0' }}</small>
+          </button>
+        </div>
+      </div>
+
+      <!-- Nút hành động -->
+      <div class="d-flex gap-3 mb-4">
+        <button class="btn btn-primary btn-lg px-4" type="button" (click)="addToCart()">
+          <i class="fas fa-cart-plus me-2"></i> Thêm vào giỏ hàng
+        </button>
+        <button class="btn btn-danger btn-lg px-4" type="button">Mua ngay</button>
+      </div>
+
+      <!-- Bảng thông số kỹ thuật -->
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white fw-bold">Thông số kỹ thuật</div>
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item d-flex justify-content-between">
+            <span class="text-muted">Chip xử lý (CPU)</span>
+            <span class="fw-semibold">{{ product.chipset || 'Đang cập nhật' }}</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between">
+            <span class="text-muted">Kích thước màn hình</span>
+            <span class="fw-semibold">{{ product.screenSize || 'Đang cập nhật' }}</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between">
+            <span class="text-muted">Dung lượng pin</span>
+            <span class="fw-semibold">{{
+              product.batteryCapacity ? product.batteryCapacity + ' mAh' : 'Đang cập nhật'
+            }}</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>

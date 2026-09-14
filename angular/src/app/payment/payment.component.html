@@ -1,0 +1,34 @@
+<div class="container py-5 text-center">
+  <div class="card border-0 shadow mx-auto p-4" style="max-width: 500px">
+    <h4 class="fw-bold text-success mb-3">
+      <i class="fas fa-check-circle me-2"></i>Đặt hàng thành công!
+    </h4>
+    <p class="text-muted small">
+      Vui lòng quét mã VietQR bên dưới bằng bất kỳ ứng dụng ngân hàng nào để thanh toán.
+    </p>
+
+    <div *ngIf="loading" class="py-5">
+      <div class="spinner-border text-primary" role="status"></div>
+      <p class="mt-2 text-muted">Đang tạo mã thanh toán...</p>
+    </div>
+
+    <div *ngIf="!loading && qrUrl" class="my-3">
+      <img
+        [src]="qrUrl"
+        class="img-fluid rounded border p-2"
+        alt="Mã VietQR Thanh Toán"
+        style="max-height: 380px"
+      />
+    </div>
+
+    <div class="alert alert-info text-start small mb-4">
+      <i class="fas fa-info-circle me-1"></i>
+      Nội dung chuyển khoản và số tiền đã được tạo tự động. Bạn vui lòng giữ nguyên nội dung khi
+      chuyển khoản.
+    </div>
+
+    <button class="btn btn-primary w-100 py-2" (click)="onCompleted()">
+      Tôi đã thanh toán / Hoàn tất
+    </button>
+  </div>
+</div>
