@@ -35,6 +35,13 @@
             <button class="btn btn-primary btn-sm" (click)="openUpdateModal(item)">
               <i class="fa fa-edit"></i> Cập nhật kho
             </button>
+            <button
+              class="btn btn-sm btn-outline-danger me-1"
+              title="Xóa/Reset tồn kho về 0"
+              (click)="onResetStock(item.id)"
+            >
+              <i class="fa fa-trash"></i> Xóa kho
+            </button>
           </td>
         </tr>
       </tbody>

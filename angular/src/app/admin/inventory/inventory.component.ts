@@ -196,4 +196,18 @@ export class InventoryComponent implements OnInit {
       this.loadInventory();
     });
   }
+  onResetStock(variantId: string) {
+    if (confirm('Bạn có chắc chắn muốn xóa sạch tồn kho của sản phẩm này (đưa về 0)?')) {
+      this.inventoryService.resetStock(variantId).subscribe({
+        next: () => {
+          // Thông báo thành công (nếu có toast/notify)
+          // Load lại danh sách kho
+          this.loadInventory();
+        },
+        error: err => {
+          console.error('Lỗi khi reset kho:', err);
+        },
+      });
+    }
+  }
 }

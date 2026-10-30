@@ -149,7 +149,7 @@ namespace PhoneStore.Inventory
                 var vHistories = histories.Where(h => h.VariantId == variant.Id).ToList();
 
                 // 1. Đầu kỳ = Mặc định 20 + Tổng lịch sử (IMPORT cộng, EXPORT trừ) trước ngày startDate
-                int openingStock = 20 + vHistories
+                int openingStock = 0 + vHistories
                     .Where(h => h.CreationTime < startDate)
                     .Sum(h => h.ChangeType == "IMPORT" ? h.QuantityChange : -h.QuantityChange);
 
@@ -194,6 +194,22 @@ namespace PhoneStore.Inventory
                 ChangeType = "IMPORT",
                 QuantityChange = input.Quantity,
                 Note = input.Note
+            });
+        }
+        public async Task ResetStockAsync(Guid variantId)
+        {
+            var variant = await _variantRepository.GetAsync(variantId);
+            var previousStock = variant.StockCount;
+
+            variant.StockCount = 0;
+            await _variantRepository.UpdateAsync(variant);
+
+            await _inventoryHistoryRepository.InsertAsync(new InventoryHistory
+            {
+                VariantId = variantId,
+                ChangeType = "RESET",
+                QuantityChange = -previousStock,
+                Note = "Admin xóa/reset tồn kho về 0"
             });
         }
 

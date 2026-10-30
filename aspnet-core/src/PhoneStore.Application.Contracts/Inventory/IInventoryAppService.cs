@@ -17,6 +17,7 @@ namespace PhoneStore.Inventory
         Task<InventoryItemDto> CreateAsync(CreateInventoryDto input);
         Task<List<InventoryReportDto>> GetReportAsync(DateTime? fromDate, DateTime? toDate);
         Task ImportStockAsync(Guid variantId, ImportStockInputDto input);
+        Task ResetStockAsync(Guid variantId);
         Task<List<InventoryHistoryDto>> GetHistoryAsync(Guid variantId);
         
     }
