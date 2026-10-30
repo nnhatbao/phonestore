@@ -1,0 +1,168 @@
+.category-sidebar {
+  background: #ffffff;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #edf2f7;
+  top: 85px; // Giữ khoảng cách khi cuộn trang
+  z-index: 10;
+  transition: box-shadow 0.25s ease;
+
+  &:hover {
+    box-shadow: 0 8px 24px rgba(149, 157, 165, 0.15) !important;
+  }
+
+  // Khung tiêu đề
+  .sidebar-header {
+    padding: 14px 18px;
+    background: #f8fafc;
+    border-bottom: 1px solid #edf2f7;
+
+    .header-icon-box {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      background: #e2e8f0;
+      color: #334155;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+    }
+
+    .title-text {
+      font-size: 0.95rem;
+      color: #1e293b;
+      letter-spacing: 0.2px;
+      text-transform: uppercase;
+    }
+  }
+
+  // Danh sách các danh mục
+  .category-list {
+    padding: 6px 0;
+
+    .category-item {
+      width: 100%;
+      border: none;
+      background: transparent;
+      padding: 10px 18px;
+      text-align: left;
+      position: relative;
+      cursor: pointer;
+      color: #475569;
+      font-size: 0.92rem;
+      font-weight: 500;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+
+      // Icon tròn bên trái tên danh mục
+      .category-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        background: #f1f5f9;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+
+        .brand-svg-logo {
+          width: 18px;
+          height: 18px;
+          object-fit: contain;
+          filter: grayscale(100%) opacity(0.75); // Màu xám nhẹ mặc định
+          transition: all 0.2s ease;
+        }
+      }
+
+      // Khi hover hoặc khi mục đang active: logo sáng rõ hoặc đổi màu tương phản
+      .category-item:hover {
+        .brand-svg-logo {
+          filter: none; // Trả về màu gốc thương hiệu
+        }
+      }
+
+      .category-item.active {
+        .brand-svg-logo {
+          filter: brightness(0) invert(1); // Chuyển logo sang màu trắng trên nền đỏ/xanh
+        }
+      }
+
+      .category-name {
+        transition: color 0.2s ease;
+      }
+
+      // Mũi tên nhỏ bên phải
+      .arrow-icon {
+        font-size: 11px;
+        color: #cbd5e1;
+        opacity: 0;
+        transform: translateX(-4px);
+        transition: all 0.2s ease;
+      }
+
+      // Badge hiển thị số lượng
+      .category-badge {
+        font-size: 0.75rem;
+        background-color: #f1f5f9;
+        color: #64748b;
+        padding: 3px 9px;
+        border-radius: 20px;
+        font-weight: 600;
+      }
+
+      // Hiệu ứng Hover
+      &:hover {
+        background-color: #f8fafc;
+        color: #d70018; // Tông đỏ công nghệ đặc trưng của các sàn điện thoại
+        padding-left: 22px; // Trượt nhẹ sang phải
+
+        .category-icon {
+          background-color: #fee2e2;
+          color: #d70018;
+        }
+
+        .arrow-icon {
+          opacity: 1;
+          color: #d70018;
+          transform: translateX(0);
+        }
+      }
+
+      // Trạng thái đang được bấm chọn (Active)
+      &.active {
+        background-color: #fff1f2;
+        color: #d70018;
+        font-weight: 600;
+
+        // Thanh indicator đỏ dọc ở mép trái
+        &::before {
+          content: '';
+          position: absolute;
+          left: 0;
+          top: 0;
+          bottom: 0;
+          width: 4px;
+          background: #d70018;
+          border-top-right-radius: 4px;
+          border-bottom-right-radius: 4px;
+        }
+
+        .category-icon {
+          background-color: #d70018;
+          color: #ffffff;
+        }
+
+        .category-badge {
+          background-color: #d70018;
+          color: #ffffff;
+        }
+
+        .arrow-icon {
+          opacity: 1;
+          color: #d70018;
+          transform: translateX(0);
+        }
+      }
+    }
+  }
+}

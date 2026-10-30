@@ -1,0 +1,107 @@
+<header
+  class="bg-white border-bottom py-2 px-4 d-flex justify-content-between align-items-center shadow-sm"
+>
+  <!-- Khu vực hiển thị thông tin User & Đăng xuất -->
+  <div class="d-flex align-items-center gap-3" *ngIf="currentUser$ | async as user">
+    <!-- Khi đã đăng nhập -->
+    <ng-container *ngIf="user.isAuthenticated; else loginBtn">
+      <div class="d-flex align-items-center gap-2">
+        <i class="fa fa-user-circle fs-4 text-secondary"></i>
+        <span class="fw-bold text-dark">{{ user.userName }}</span>
+      </div>
+
+      <button class="btn btn-outline-danger btn-sm" type="button" (click)="logout()">
+        <i class="fa fa-sign-out-alt me-1"></i> Đăng xuất
+      </button>
+    </ng-container>
+
+    <!-- Khi chưa đăng nhập -->
+    <ng-template #loginBtn>
+      <button class="btn btn-primary btn-sm" type="button" (click)="login()">
+        <i class="fa fa-sign-in-alt me-1"></i> Đăng nhập
+      </button>
+    </ng-template>
+  </div>
+</header>
+<div class="d-flex" style="min-height: 100vh">
+  <!-- Sidebar Admin -->
+  <aside class="bg-dark text-white p-3" style="width: 260px">
+    <div class="d-flex align-items-center mb-4">
+      <i class="fa fa-cogs fs-4 me-2 text-warning"></i>
+      <h5 class="m-0 text-uppercase fw-bold">Admin Portal</h5>
+    </div>
+
+    <ul class="nav nav-pills flex-column gap-2">
+      <li class="nav-item">
+        <a
+          class="nav-link text-white"
+          routerLink="/admin/products"
+          routerLinkActive="active bg-primary"
+        >
+          <i class="fa fa-boxes me-2"></i> Quản lý sản phẩm
+        </a>
+      </li>
+      <li class="nav-item">
+        <a
+          class="nav-link text-white"
+          routerLink="/admin/categories"
+          routerLinkActive="active bg-primary"
+        >
+          <i class="fa fa-tags me-2"></i> Quản lý danh mục
+        </a>
+      </li>
+      <li class="nav-item">
+        <a
+          class="nav-link text-white"
+          routerLink="/admin/identity/users"
+          routerLinkActive="active bg-primary"
+        >
+          <i class="fa fa-users me-2"></i> Quản lý User (ABP)
+        </a>
+      </li>
+      <li class="nav-item">
+        <a
+          class="nav-link text-white"
+          routerLink="/admin/identity/roles"
+          routerLinkActive="active bg-primary"
+        >
+          <i class="fa fa-user-shield me-2"></i> Phân quyền Roles
+        </a>
+      </li>
+      <li class="nav-item">
+        <a
+          class="nav-link text-white"
+          routerLink="/admin/orders"
+          routerLinkActive="active bg-primary"
+        >
+          <i class="fa fa-receipt me-2"></i> Quản lý đơn hàng
+        </a>
+        <hr class="border-secondary my-3" />
+      </li>
+      <li class="nav-item">
+        <a
+          class="nav-link text-white"
+          routerLink="/admin/inventory"
+          routerLinkActive="active bg-primary"
+        >
+          <i class="fa fa-warehouse me-2"></i> Quản lý kho
+        </a>
+        <hr class="border-secondary my-3" />
+      </li>
+    </ul>
+  </aside>
+
+  <!-- Vùng nội dung chính -->
+  <div class="flex-grow-1 bg-light d-flex flex-column">
+    <header
+      class="bg-white border-bottom py-2 px-4 d-flex justify-content-between align-items-center"
+    >
+      <span class="text-muted fw-semibold">Hệ thống quản trị PhoneStore</span>
+      <span class="badge bg-danger">Tài khoản Quản trị</span>
+    </header>
+
+    <main class="p-4 flex-grow-1">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>

@@ -19,7 +19,8 @@ namespace PhoneStore.Orders
         public string Address { get; set; }
         public decimal TotalPrice { get; set; }
         public OrderStatus Status { get; set; }
-        public ICollection<OrderItem> Items { get; set; }
+        public string? PaymentMethod { get; set; }
+        public virtual ICollection<OrderItem> Items { get; set; }
 
         protected Order()
         {

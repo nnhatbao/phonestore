@@ -1,0 +1,149 @@
+<header class="main-ecommerce-header sticky-top">
+  <div class="container py-2">
+    <div class="d-flex align-items-center justify-content-between gap-3">
+      <!-- 1. LOGO CỬA HÀNG -->
+      <a routerLink="/" class="navbar-brand d-flex align-items-center gap-2 text-decoration-none">
+        <div class="brand-badge-icon">
+          <i class="fas fa-mobile-alt"></i>
+        </div>
+        <div class="brand-text">
+          <span class="fs-4 fw-bold text-danger">Phone</span
+          ><span class="fs-4 fw-bold text-dark">Store</span>
+        </div>
+      </a>
+
+      <!-- 3. THANH TÌM KIẾM SẢN PHẨM -->
+      <div class="flex-grow-1 mx-2" style="max-width: 550px">
+        <div class="search-wrapper d-flex align-items-center">
+          <input
+            type="text"
+            class="search-input form-control border-0 bg-transparent shadow-none"
+            placeholder="Bạn tìm gì ?..."
+            [(ngModel)]="searchKeyword"
+            (keyup.enter)="onSearch()"
+          />
+          <button
+            *ngIf="searchKeyword && searchKeyword.trim().length > 0"
+            type="button"
+            class="btn btn-sm text-muted border-0 bg-transparent p-0 me-2"
+            style="cursor: pointer"
+            title="Xóa tìm kiếm"
+            (click)="clearSearch()"
+          >
+            <i class="fas fa-times-circle fs-6"></i>
+          </button>
+          <button
+            class="search-btn btn border-0 bg-transparent shadow-none"
+            type="button"
+            (click)="onSearch()"
+          >
+            <i class="fas fa-search text-muted"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- 4. CÁC NÚT HÀNH ĐỘNG BÊN PHẢI (GIỎ HÀNG, TÀI KHOẢN, QUẢN TRỊ) -->
+      <div class="d-flex align-items-center gap-2">
+        <!-- Nút Trang quản trị (Chỉ hiện khi là Admin) -->
+        <a
+          *ngIf="hasAdminPermission"
+          routerLink="/admin"
+          class="btn btn-warning text-dark fw-bold d-flex align-items-center gap-1 shadow-sm"
+        >
+          <i class="fas fa-cog"></i>
+          <span class="d-none d-lg-inline">Quản trị</span>
+        </a>
+
+        <!-- Nút Giỏ hàng (Có badge số lượng) -->
+        <a
+          routerLink="/cart"
+          class="btn btn-light border position-relative d-flex align-items-center gap-2 px-3"
+        >
+          <i class="fas fa-shopping-cart text-danger fs-5"></i>
+          <span class="d-none d-md-inline fw-semibold text-dark">Giỏ hàng</span>
+          <span
+            class="badge rounded-pill bg-danger position-absolute top-0 start-100 translate-middle"
+            *ngIf="cartCount > 0"
+          >
+            {{ cartCount }}
+          </span>
+        </a>
+
+        <!-- Khối Tài khoản / Đăng nhập -->
+        <div class="dropdown position-relative" *ngIf="isAuthenticated; else loginBtn">
+          <button
+            class="btn btn-light border d-flex align-items-center gap-2 px-3 dropdown-toggle"
+            type="button"
+            (click)="toggleDropdown()"
+          >
+            <div class="avatar-circle">
+              {{ (currentUser?.userName || 'U')[0].toUpperCase() }}
+            </div>
+            <span class="fw-semibold text-dark d-none d-md-inline">{{
+              currentUser?.userName
+            }}</span>
+          </button>
+          <div
+            *ngIf="isDropdownOpen"
+            (click)="isDropdownOpen = false"
+            style="
+              position: fixed;
+              top: 0;
+              left: 0;
+              width: 100vw;
+              height: 100vh;
+              z-index: 999;
+              background: transparent;
+            "
+          ></div>
+          <!-- Thêm [class.show]="isDropdownOpen" -->
+          <ul
+            class="dropdown-menu dropdown-menu-end shadow border-0 mt-2"
+            [class.show]="isDropdownOpen"
+            style="right: 0; left: auto; min-width: 180px"
+          >
+            <li>
+              <h6 class="dropdown-header">Xin chào, {{ currentUser?.userName }}</h6>
+            </li>
+            <li><hr class="dropdown-divider my-1" /></li>
+            <li>
+              <a class="dropdown-item py-2" routerLink="/orders">
+                <i class="fas fa-receipt me-2 text-muted"></i>Đơn mua / Lịch sử đặt hàng
+              </a>
+            </li>
+
+            <li><hr class="dropdown-divider" /></li>
+            <li>
+              <button
+                class="dropdown-item d-flex align-items-center gap-2 py-2"
+                (click)="openProfile()"
+              >
+                <i class="fas fa-user-cog text-primary"></i>
+                <span>Profile</span>
+              </button>
+            </li>
+            <li>
+              <button
+                class="dropdown-item text-danger d-flex align-items-center gap-2"
+                (click)="logout()"
+              >
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Đăng xuất</span>
+              </button>
+            </li>
+          </ul>
+        </div>
+
+        <ng-template #loginBtn>
+          <button
+            (click)="login()"
+            class="btn btn-outline-danger fw-semibold d-flex align-items-center gap-1"
+          >
+            <i class="fas fa-user-circle"></i>
+            <span>Đăng nhập</span>
+          </button>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+</header>

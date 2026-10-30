@@ -6,6 +6,7 @@ using Volo.Abp.Data;
 using Volo.Abp.DependencyInjection;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Guids;
+using Volo.Abp.Identity;
 
 namespace PhoneStore.Data
 {
@@ -14,15 +15,18 @@ namespace PhoneStore.Data
         private readonly IRepository<Category, Guid> _categoryRepository;
         private readonly IRepository<Product, Guid> _productRepository;
         private readonly IGuidGenerator _guidGenerator;
+        private readonly IdentityUserManager _userManager;
 
         public PhoneStoreDataSeederContributor(
             IRepository<Category, Guid> categoryRepository,
             IRepository<Product, Guid> productRepository,
-            IGuidGenerator guidGenerator)
+            IGuidGenerator guidGenerator,
+            IdentityUserManager userManager)
         {
             _categoryRepository = categoryRepository;
             _productRepository = productRepository;
             _guidGenerator = guidGenerator;
+            _userManager = userManager;
         }
 
         public async Task SeedAsync(DataSeedContext context)
@@ -32,7 +36,14 @@ namespace PhoneStore.Data
             {
                 return;
             }
-
+            var adminUser = await _userManager.FindByNameAsync("admin");
+            if (adminUser != null)
+            {
+                var token = await _userManager.GeneratePasswordResetTokenAsync(adminUser);
+                await _userManager.ResetPasswordAsync(adminUser, token, "Admin@123456");
+                adminUser.SetIsActive(true);
+                await _userManager.UpdateAsync(adminUser);
+            }
             // 1. Tạo danh mục hãng
             var appleCategory = new Category(
                 _guidGenerator.Create(),

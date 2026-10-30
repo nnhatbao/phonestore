@@ -7,4 +7,5 @@ namespace PhoneStore;
 public class PhoneStoreBrandingProvider : DefaultBrandingProvider
 {
     public override string AppName => "PhoneStore";
+    public override string LogoUrl => null;
 }

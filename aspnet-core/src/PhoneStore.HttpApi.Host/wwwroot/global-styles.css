@@ -1,1 +1,70 @@
-/* Your Global Styles */
+/* Custom giao diện Account Profile E-commerce */
+body {
+    background-color: #f8fafc !important;
+}
+
+.navbar.bg-dark,
+nav.navbar {
+    background-color: #ffffff !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+}
+
+.navbar-brand {
+    color: #d70018 !important;
+    font-weight: 800 !important;
+}
+
+.navbar .nav-link,
+.navbar .dropdown-toggle {
+    color: #334155 !important;
+}
+
+.card,
+.card-body,
+fieldset {
+    border-radius: 12px !important;
+    border: 1px solid #edf2f7 !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04) !important;
+}
+
+.nav-pills .nav-link.active,
+.nav-pills .show > .nav-link {
+    background-color: #d70018 !important;
+    color: #ffffff !important;
+}
+
+.nav-pills .nav-link:hover {
+    background-color: #fee2e2 !important;
+    color: #d70018 !important;
+}
+
+.form-control:focus {
+    border-color: #d70018 !important;
+    box-shadow: 0 0 0 3px rgba(215, 0, 24, 0.15) !important;
+}
+
+.btn-primary,
+button[type='submit'] {
+    background-color: #d70018 !important;
+    border-color: #d70018 !important;
+}
+/* Ẩn thẻ ảnh bị vỡ nếu có */
+.navbar-brand img {
+    display: none !important;
+}
+
+/* Đảm bảo chữ PhoneStore hiển thị đẹp */
+.navbar-brand {
+    cursor: pointer !important;
+}
+/* Tắt link mặc định của thẻ a.navbar-brand */
+.navbar-brand {
+    position: relative !important;
+    cursor: pointer !important;
+}
+
+/* Đặt sự kiện click cho thẻ a chuyển thẳng đến trang products */
+.navbar-brand:hover {
+    opacity: 0.85;
+}

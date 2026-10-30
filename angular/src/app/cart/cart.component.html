@@ -105,7 +105,70 @@
             placeholder="Số nhà, tên đường, phường/xã..."
           ></textarea>
         </div>
+        <!-- Thêm vào bên dưới ô Địa chỉ giao hàng và trên Tổng thanh toán -->
+        <div class="payment-methods mt-3 mb-3">
+          <label class="form-label fw-bold">Phương thức thanh toán</label>
 
+          <div class="form-check mb-2">
+            <input
+              class="form-check-input"
+              type="radio"
+              name="paymentGroup"
+              id="optCod"
+              [checked]="paymentMethod === 'COD'"
+              (change)="paymentMethod = 'COD'"
+            />
+            <label class="form-check-label" for="optCod"> Thanh toán khi nhận hàng (COD) </label>
+          </div>
+
+          <div class="form-check mb-3">
+            <input
+              class="form-check-input"
+              type="radio"
+              name="paymentGroup"
+              id="optBank"
+              [checked]="paymentMethod === 'BANK'"
+              (change)="paymentMethod = 'BANK'"
+            />
+            <label class="form-check-label" for="optBank">
+              Chuyển khoản ngân hàng (Quét mã QR)
+            </label>
+          </div>
+        </div>
+
+        <!-- Modal kết quả (COD thành công hoặc QR Chuyển khoản) -->
+        <div class="modal-backdrop-custom" *ngIf="showModal">
+          <div class="modal-box p-4 text-center">
+            <!-- Trường hợp 1: COD -->
+            <div *ngIf="selectedPaymentMethod === 'COD'">
+              <div class="text-success fs-1 mb-2">✓</div>
+              <h4 class="fw-bold">Cảm ơn bạn đã đặt hàng!</h4>
+              <p class="text-muted">Đơn hàng của bạn đã được ghi nhận và đang chuẩn bị giao.</p>
+              <button class="btn btn-primary mt-3" (click)="closeModal()">Hoàn tất</button>
+            </div>
+
+            <!-- Trường hợp 2: Chuyển khoản qua VietQR -->
+            <div *ngIf="selectedPaymentMethod === 'BANK'">
+              <h4 class="fw-bold mb-3">Quét mã QR để thanh toán</h4>
+              <div class="qr-container mb-3">
+                <!-- Sử dụng dịch vụ VietQR tự động sinh mã theo số tiền và mã đơn -->
+                <img
+                  [src]="qrCodeUrl"
+                  alt="Mã QR Thanh Toán"
+                  class="img-fluid border rounded p-2"
+                  style="max-width: 250px"
+                />
+              </div>
+              <p class="small text-muted mb-1">
+                Số tiền: <strong>{{ totalAmount | currency: 'VND' : '' }} đ</strong>
+              </p>
+              <p class="small text-muted">
+                Nội dung CK: <strong>{{ orderCode }}</strong>
+              </p>
+              <button class="btn btn-success mt-2" (click)="closeModal()">Đã chuyển khoản</button>
+            </div>
+          </div>
+        </div>
         <hr class="my-3" />
 
         <div class="d-flex justify-content-between mb-3">

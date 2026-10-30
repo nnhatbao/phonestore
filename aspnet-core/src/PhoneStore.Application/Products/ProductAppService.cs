@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
+using PhoneStore.Permissions;
 
 namespace PhoneStore.Products
 {
@@ -19,6 +20,14 @@ namespace PhoneStore.Products
         public ProductAppService(IRepository<Product, Guid> repository) 
             : base(repository)
         {
+            //Xem sản phẩm: Cho phép tất cả mọi người (kể cả khách vãng lai và user)
+            GetPolicyName = null;
+            GetListPolicyName = null;
+
+            //Thao tác quản lý: Chỉ ai có quyền tương ứng mới được gọi API
+            CreatePolicyName = PhoneStorePermissions.Products.Create;
+            UpdatePolicyName = PhoneStorePermissions.Products.Edit;
+            DeletePolicyName = PhoneStorePermissions.Products.Delete;
         }
 
         // Đảm bảo nạp kèm danh sách Variants khi lấy danh sách phân trang

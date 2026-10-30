@@ -15,6 +15,8 @@ using Volo.Abp.TenantManagement;
 using Volo.Abp.TenantManagement.EntityFrameworkCore;
 using PhoneStore.Products;
 using PhoneStore.Orders;
+using PhoneStore.Categories;
+using PhoneStore.Inventory;
 
 namespace PhoneStore.EntityFrameworkCore;
 
@@ -44,9 +46,10 @@ public class PhoneStoreDbContext :
     //Identity
     public DbSet<Order> Orders { get; set; }
     public DbSet<OrderItem> OrderItems { get; set; }
-    public DbSet<Category> Categories { get; set; }
+    public DbSet<PhoneStore.Categories.Category> Categories { get; set; }
     public DbSet<Product> Products { get; set; }
     public DbSet<ProductVariant> ProductVariants { get; set; }
+    public DbSet<InventoryHistory> InventoryHistories { get; set; }
     public DbSet<IdentityUser> Users { get; set; }
     public DbSet<IdentityRole> Roles { get; set; }
     public DbSet<IdentityClaimType> ClaimTypes { get; set; }
@@ -95,7 +98,7 @@ builder.Entity<OrderItem>(b =>
         builder.ConfigureIdentityServer();
         builder.ConfigureFeatureManagement();
         builder.ConfigureTenantManagement();
-        builder.Entity<Category>(b =>
+        builder.Entity<PhoneStore.Categories.Category>(b =>
     {
         b.ToTable(PhoneStoreConsts.DbTablePrefix + "Categories", PhoneStoreConsts.DbSchema);
         b.ConfigureByConvention(); // Cấu hình tự động Audit logs của ABP
@@ -109,7 +112,7 @@ builder.Entity<OrderItem>(b =>
         b.Property(x => x.Name).IsRequired().HasMaxLength(256);
 
         // Khóa ngoại Category -> Product
-        b.HasOne<Category>().WithMany().HasForeignKey(x => x.CategoryId).IsRequired();
+        b.HasOne<PhoneStore.Categories.Category>().WithMany().HasForeignKey(x => x.CategoryId).IsRequired();
         
         // Mối quan hệ 1 - N: Product -> Variants
         b.HasMany(x => x.Variants).WithOne().HasForeignKey(x => x.ProductId).IsRequired();

@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Globalization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -29,6 +31,7 @@ using Volo.Abp.Modularity;
 using Volo.Abp.Swashbuckle;
 using Volo.Abp.UI.Navigation.Urls;
 using Volo.Abp.VirtualFileSystem;
+using Volo.Abp.AspNetCore.Mvc.UI.Theme.Shared.Bundling;
 
 namespace PhoneStore;
 
@@ -59,6 +62,34 @@ public class PhoneStoreHttpApiHostModule : AbpModule
         ConfigureVirtualFileSystem(context);
         ConfigureCors(context, configuration);
         ConfigureSwaggerServices(context, configuration);
+        Configure<AbpBundlingOptions>(options =>
+        {
+            options.ScriptBundles.Configure(
+                StandardBundles.Scripts.Global,
+                bundle =>
+                {
+                    bundle.AddFiles("/redirect-brand.js");
+                }
+            );
+        });
+        Configure<AbpLocalizationOptions>(options =>
+        {
+            options.Languages.Add(new LanguageInfo("vi", "vi", "Tiếng Việt"));
+            options.Languages.Add(new LanguageInfo("en", "en", "English"));
+        });
+
+        Configure<RequestLocalizationOptions>(options =>
+        {
+            var supportedCultures = new[]
+            {
+                new CultureInfo("vi"),
+                new CultureInfo("en")
+            };
+
+            options.DefaultRequestCulture = new RequestCulture("vi");
+            options.SupportedCultures = supportedCultures;
+            options.SupportedUICultures = supportedCultures;
+        });
     }
 
     private void ConfigureBundles()
@@ -173,6 +204,19 @@ public class PhoneStoreHttpApiHostModule : AbpModule
             options.Languages.Add(new LanguageInfo("zh-Hant", "zh-Hant", "繁體中文"));
             options.Languages.Add(new LanguageInfo("de-DE", "de-DE", "Deutsch", "de"));
             options.Languages.Add(new LanguageInfo("es", "es", "Español", "es"));
+            options.Languages.Add(new LanguageInfo("vi", "vi", "Tiếng Việt"));
+        });
+        Configure<RequestLocalizationOptions>(options =>
+        {
+            var supportedCultures = new[]
+            {
+                new CultureInfo("vi"),
+                new CultureInfo("en")
+            };
+
+            options.DefaultRequestCulture = new RequestCulture("vi");
+            options.SupportedCultures = supportedCultures;
+            options.SupportedUICultures = supportedCultures;
         });
     }
 
@@ -209,6 +253,15 @@ public class PhoneStoreHttpApiHostModule : AbpModule
         }
 
         app.UseAbpRequestLocalization();
+        app.Use(async (httpContext, next) =>
+        {
+            if (httpContext.Request.Path == "/" || httpContext.Request.Path == "")
+            {
+                httpContext.Response.Redirect("http://localhost:4200/products");
+                return;
+            }
+            await next();
+        });
 
         if (!env.IsDevelopment())
         {
@@ -217,6 +270,16 @@ public class PhoneStoreHttpApiHostModule : AbpModule
 
         app.UseCorrelationId();
         app.UseStaticFiles();
+        app.Use(async (httpContext, next) =>
+        {
+            // Nếu người dùng bấm vào Logo trỏ về trang chủ Backend "/"
+            if (httpContext.Request.Path == "/" || httpContext.Request.Path == "")
+            {
+                httpContext.Response.Redirect("http://localhost:4200/products");
+                return;
+            }
+            await next();
+        });
         app.UseRouting();
         app.UseCors();
         app.UseAuthentication();

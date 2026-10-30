@@ -2,19 +2,23 @@
 using Volo.Abp.Authorization.Permissions;
 using Volo.Abp.Localization;
 
-namespace PhoneStore.Permissions;
-
-public class PhoneStorePermissionDefinitionProvider : PermissionDefinitionProvider
+namespace PhoneStore.Permissions
 {
-    public override void Define(IPermissionDefinitionContext context)
+    public class PhoneStorePermissionDefinitionProvider : PermissionDefinitionProvider
     {
-        var myGroup = context.AddGroup(PhoneStorePermissions.GroupName);
-        //Define your own permissions here. Example:
-        //myGroup.AddPermission(PhoneStorePermissions.MyPermission1, L("Permission:MyPermission1"));
-    }
+        public override void Define(IPermissionDefinitionContext context)
+        {
+            var phoneStoreGroup = context.AddGroup(PhoneStorePermissions.GroupName, L("Permission:PhoneStore"));
 
-    private static LocalizableString L(string name)
-    {
-        return LocalizableString.Create<PhoneStoreResource>(name);
+            var productsPermission = phoneStoreGroup.AddPermission(PhoneStorePermissions.Products.Default, L("Permission:Products"));
+            productsPermission.AddChild(PhoneStorePermissions.Products.Create, L("Permission:Products.Create"));
+            productsPermission.AddChild(PhoneStorePermissions.Products.Edit, L("Permission:Products.Edit"));
+            productsPermission.AddChild(PhoneStorePermissions.Products.Delete, L("Permission:Products.Delete"));
+        }
+
+        private static LocalizableString L(string name)
+        {
+            return LocalizableString.Create<PhoneStoreResource>(name);
+        }
     }
 }

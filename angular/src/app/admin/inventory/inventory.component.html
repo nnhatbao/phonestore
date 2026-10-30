@@ -1,0 +1,299 @@
+<div class="card">
+  <div class="card-header d-flex justify-content-between align-items-center">
+    <h2>Quản lý kho sản phẩm</h2>
+    <!-- Nút Thêm tồn kho mới -->
+    <button class="btn btn-success" (click)="openCreateModal()">
+      <i class="fa fa-plus"></i> Thêm tồn kho mới
+    </button>
+  </div>
+  <div class="card-body">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Tên sản phẩm</th>
+          <th>Phiên bản / Màu</th>
+          <th>SKU</th>
+          <th>Dung lượng</th>
+          <th>Giá bán</th>
+          <th>Tồn kho</th>
+          <th>Thao tác</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of inventoryList">
+          <td>{{ item.productName }}</td>
+          <td>{{ item.variantName }}</td>
+          <td>{{ item.sku }}</td>
+          <td>{{ item.storage }}</td>
+          <td>{{ item.price | currency: 'VND' }}</td>
+          <td>
+            <span class="badge" [ngClass]="item.stockCount > 0 ? 'bg-success' : 'bg-danger'">
+              {{ item.stockCount }}
+            </span>
+          </td>
+          <td>
+            <button class="btn btn-primary btn-sm" (click)="openUpdateModal(item)">
+              <i class="fa fa-edit"></i> Cập nhật kho
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Modal Thêm mới tồn kho -->
+<div
+  class="modal fade"
+  [class.show]="isCreateModalOpen"
+  tabindex="-1"
+  [style.display]="isCreateModalOpen ? 'block' : 'none'"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Thêm mới tồn kho</h5>
+        <button type="button" class="btn-close" (click)="isCreateModalOpen = false"></button>
+      </div>
+      <div class="modal-body">
+        <!-- 1. Chọn Danh mục -->
+        <div class="mb-3">
+          <label class="form-label">Danh mục sản phẩm:</label>
+          <select
+            class="form-select"
+            [(ngModel)]="selectedCategoryId"
+            (change)="onCategoryChange()"
+          >
+            <option value="">-- Chọn danh mục --</option>
+            <option *ngFor="let cat of categories" [value]="cat.id">{{ cat.name }}</option>
+          </select>
+        </div>
+
+        <!-- 2. Chọn Tên sản phẩm thuộc danh mục -->
+        <div class="mb-3">
+          <label class="form-label">Tên sản phẩm:</label>
+          <select
+            class="form-select"
+            [(ngModel)]="newInventory.productId"
+            [disabled]="!selectedCategoryId"
+          >
+            <option value="">-- Chọn sản phẩm --</option>
+            <option *ngFor="let prod of filteredProducts" [value]="prod.id">{{ prod.name }}</option>
+          </select>
+        </div>
+
+        <!-- 3. Nhập Màu sắc -->
+        <div class="mb-3">
+          <label class="form-label">Màu sắc:</label>
+          <input
+            type="text"
+            class="form-control"
+            [(ngModel)]="newInventory.color"
+            placeholder="Ví dụ: Đen, Trắng, Vàng..."
+          />
+        </div>
+
+        <!-- 4. Mã SKU -->
+        <div class="mb-3">
+          <label class="form-label">Mã SKU:</label>
+          <input
+            type="text"
+            class="form-control"
+            [(ngModel)]="newInventory.sku"
+            placeholder="Nhập mã SKU biến thể"
+          />
+        </div>
+
+        <!-- 5. Dung lượng lưu trữ (Storage) -->
+        <div class="mb-3">
+          <label class="form-label">Dung lượng (Storage):</label>
+          <input
+            type="text"
+            class="form-control"
+            [(ngModel)]="newInventory.storage"
+            placeholder="Ví dụ: 128GB, 256GB..."
+          />
+        </div>
+
+        <!-- 6. Số lượng tồn kho -->
+        <div class="mb-3">
+          <label class="form-label">Số lượng tồn kho:</label>
+          <input type="number" class="form-control" [(ngModel)]="newInventory.stockCount" />
+        </div>
+
+        <!-- 7. Giá bán -->
+        <div class="mb-3">
+          <label class="form-label">Giá bán:</label>
+          <input type="number" class="form-control" [(ngModel)]="newInventory.price" />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="isCreateModalOpen = false">
+          Đóng
+        </button>
+        <button type="button" class="btn btn-success" (click)="saveCreate()">Thêm mới</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Cập nhật kho & Báo cáo X-N-T (2 Cột) -->
+<div
+  class="modal fade"
+  [class.show]="isModalOpen"
+  tabindex="-1"
+  [style.display]="isModalOpen ? 'block' : 'none'"
+>
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content" *ngIf="selectedItem">
+      <div class="modal-header">
+        <h5 class="modal-title">
+          Quản lý kho & Báo cáo: {{ selectedItem.productName }} ({{ selectedItem.variantName }})
+        </h5>
+        <button type="button" class="btn-close" (click)="isModalOpen = false"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <!-- CỘT 1 (Trái): Form chỉnh sửa thông tin biến thể & Nhập tồn nhanh -->
+          <div class="col-md-5 border-end">
+            <h6 class="text-primary mb-3">🛠️ Cập nhật thông số biến thể</h6>
+
+            <div class="mb-3">
+              <label class="form-label">Phiên bản màu sắc:</label>
+              <input
+                type="text"
+                class="form-control"
+                [(ngModel)]="updateColor"
+                placeholder="Nhập màu sắc..."
+              />
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Mã SKU:</label>
+              <input
+                type="text"
+                class="form-control"
+                [(ngModel)]="updateSku"
+                placeholder="Nhập mã SKU..."
+              />
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Dung lượng (Storage):</label>
+              <input
+                type="text"
+                class="form-control"
+                [(ngModel)]="updateStorage"
+                placeholder="Ví dụ: 128GB, 256GB..."
+              />
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Giá bán mới:</label>
+              <input type="number" class="form-control" [(ngModel)]="updatePrice" />
+            </div>
+
+            <!-- TÍNH NĂNG MỚI: Ô nhập số lượng & Nút Nhập tồn trực tiếp -->
+            <div class="mb-3 p-3 bg-light border rounded">
+              <label class="form-label font-weight-bold text-success">➕ Nhập tồn nhanh:</label>
+              <div class="input-group mb-2">
+                <input
+                  type="number"
+                  class="form-control"
+                  [(ngModel)]="importQuantity"
+                  placeholder="SL nhập..."
+                />
+                <button class="btn btn-success" type="button" (click)="importStock()">
+                  <i class="fa fa-plus-circle"></i> Nhập tồn
+                </button>
+              </div>
+              <input
+                type="text"
+                class="form-control form-control-sm"
+                [(ngModel)]="importNote"
+                placeholder="Ghi chú nhập kho (tùy chọn)..."
+              />
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Số lượng tồn kho (Thực tế):</label>
+              <input type="number" class="form-control" [(ngModel)]="newStockCount" disabled />
+            </div>
+          </div>
+
+          <!-- CỘT 2 (Phải): Báo cáo Xuất - Nhập - Tồn & Lịch sử giao dịch -->
+          <div class="col-md-7">
+            <h6 class="text-success mb-3">📊 Báo cáo Tồn Kho (Đầu kỳ - Cuối kỳ)</h6>
+
+            <!-- Thẻ tổng quan thông số X-N-T -->
+            <div class="row text-center mb-3">
+              <div class="col-3">
+                <div class="p-2 border bg-light rounded">
+                  <small class="text-muted d-block">Đầu kỳ</small>
+                  <strong>{{ selectedItemReport.openingStock }}</strong>
+                </div>
+              </div>
+              <div class="col-3">
+                <div class="p-2 border bg-light rounded">
+                  <small class="text-muted d-block">Tổng nhập</small>
+                  <strong class="text-success">+{{ selectedItemReport.totalImport }}</strong>
+                </div>
+              </div>
+              <div class="col-3">
+                <div class="p-2 border bg-light rounded">
+                  <small class="text-muted d-block">Tổng xuất</small>
+                  <strong class="text-danger">-{{ selectedItemReport.totalExport }}</strong>
+                </div>
+              </div>
+              <div class="col-3">
+                <div class="p-2 border bg-light rounded">
+                  <small class="text-muted d-block">Cuối kỳ</small>
+                  <strong class="text-primary">{{ selectedItemReport.closingStock }}</strong>
+                </div>
+              </div>
+            </div>
+
+            <h6 class="text-secondary mb-2">🕒 Lịch sử biến động kho</h6>
+            <div class="table-responsive" style="max-height: 220px; overflow-y: auto">
+              <table class="table table-sm table-bordered">
+                <thead>
+                  <tr>
+                    <th>Thời gian</th>
+                    <th>Loại</th>
+                    <th>Biến động</th>
+                    <th>Ghi chú</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let hist of inventoryHistory">
+                    <td>{{ hist.creationTime | date: 'dd/MM/yyyy HH:mm' }}</td>
+                    <td>
+                      <span
+                        class="badge"
+                        [ngClass]="hist.changeType === 'IMPORT' ? 'bg-success' : 'bg-danger'"
+                      >
+                        {{ hist.changeType }}
+                      </span>
+                    </td>
+                    <td>
+                      <strong>{{
+                        hist.quantityChange > 0 ? +hist.quantityChange : hist.quantityChange
+                      }}</strong>
+                    </td>
+                    <td>{{ hist.note || 'Không có ghi chú' }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="isModalOpen = false">Đóng</button>
+        <button type="button" class="btn btn-primary" (click)="saveStock()">Lưu thay đổi</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop fade show" *ngIf="isModalOpen || isCreateModalOpen"></div>

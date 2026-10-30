@@ -24,5 +24,13 @@ namespace PhoneStore.Products
             Price = price;
             StockCount = stockCount;
         }
+        public void DecreaseStock(int quantity)
+        {
+            if (StockCount < quantity)
+            {
+                throw new Volo.Abp.UserFriendlyException($"Sản phẩm phiên bản này không đủ hàng trong kho (Còn lại: {StockCount}, Yêu cầu: {quantity}).");
+            }
+            StockCount -= quantity;
+        }
     }
 }
